@@ -15,7 +15,7 @@ promotionRouter
       })
       .catch((err) => next(err));
   })
-  .post(authenticate.verifyUser, (req, res, next) => {
+  .post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     Promotion.create(req.body)
       .then((promotion) => {
         console.log("promotion created", promotion);
@@ -25,19 +25,23 @@ promotionRouter
       })
       .catch((err) => next(err));
   })
-  .put(authenticate.verifyUser, (req, res) => {
+  .put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res) => {
     res.statusCode = 403;
     res.end("PUT operation not supported on /promotions");
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
-    Promotion.deleteMany()
-      .then((response) => {
-        res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
-        res.json(response);
-      })
-      .catch((err) => next(err));
-  });
+  .delete(
+    authenticate.verifyUser,
+    authenticate.verifyAdmin,
+    (req, res, next) => {
+      Promotion.deleteMany()
+        .then((response) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(response);
+        })
+        .catch((err) => next(err));
+    }
+  );
 
 promotionRouter
   .route("/:promotionId")
@@ -51,14 +55,14 @@ promotionRouter
       .catch((err) => next(err));
   })
 
-  .post(authenticate.verifyUser, (req, res) => {
+  .post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res) => {
     res.statusCode = 403;
     res.end(
       `POST operation not supported on /promotions/${req.params.promotionId}`
     );
   })
 
-  .put(authenticate.verifyUser, (req, res, next) => {
+  .put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     Promotion.findByIdAndUpdate(
       req.params.promotionId,
       {
@@ -73,67 +77,22 @@ promotionRouter
       })
       .catch((err) => next(err));
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
-    Promotion.findByIdAnddelete(authenticate.verifyUser, req.params.promotionId)
-      .then((response) => {
-        res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
-        res.json(response);
-      })
-      .catch((err) => next(err));
-  });
-
-/*
-promotionRouter
-  .route("/")
-  .all((req, res, next) => {
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "text/plain");
-    next();
-  })
-  .get((req, res) => {
-    res.end("will send all the promotions to you");
-  })
-  .post(authenticate.verifyUser,(req, res) => {
-    res.end(
-      `Will add the promotion: ${req.body.name} with description: ${req.body.description}`
-    );
-  })
-  .put(authenticate.verifyUser,(req, res) => {
-    res.statusCode = 403;
-    res.end("PUT operation not supported on /promotions");
-  })
-  .delete(authenticate.verifyUser,(req, res) => {
-    res.end("Deleting all promotions");
-  });
-
-promotionRouter
-  .route("/:promotionId")
-  .all((req, res, next) => {
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "text/plain");
-    next();
-  })
-  .get((req, res) => {
-    res.end(
-      `Will send details of the promotion: ${req.params.promotionId} to you`
-    );
-  })
-  .post(authenticate.verifyUser,(req, res) => {
-    res.statusCode = 403;
-    res.end(
-      `POST operation not supported on /promotions/${req.params.promotionId}`
-    );
-  })
-  .put(authenticate.verifyUser,(req, res) => {
-    res.write(`Updating the promotion: ${req.params.promotionId}\n`);
-    res.end(`Will update the promotion: ${req.body.name}
-          with description: ${req.body.description}`);
-  })
-  .delete(authenticate.verifyUser,(req, res) => {
-    res.end(`Deleting promotion: ${req.params.promotionId}`);
-  });
-
-  */
+  .delete(
+    authenticate.verifyUser,
+    authenticate.verifyAdmin,
+    (req, res, next) => {
+      Promotion.findByIdAnddelete(
+        authenticate.verifyUser,
+        authenticate.verifyAdmin,
+        req.params.promotionId
+      )
+        .then((response) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(response);
+        })
+        .catch((err) => next(err));
+    }
+  );
 
 module.exports = promotionRouter;
