@@ -81,11 +81,16 @@ partnerRouter
     authenticate.verifyUser,
     authenticate.verifyAdmin,
     (req, res, next) => {
-      Partner.findByIdAnddelete(
+      // FIX 1: You have a typo in your mongo method and you do not use verifyUser
+      // or verifyAdmin here.
+      // OLD CODE:
+      /* Partner.findByIdAnddelete(
         authenticate.verifyUser,
         authenticate.verifyAdmin,
         req.params.partnerId
-      )
+      ) */
+      Partner.findByIdAndDelete(req.params.partnerId)
+      // END FIX 1
         .then((response) => {
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");

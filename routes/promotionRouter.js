@@ -81,11 +81,15 @@ promotionRouter
     authenticate.verifyUser,
     authenticate.verifyAdmin,
     (req, res, next) => {
-      Promotion.findByIdAnddelete(
+      // FIX 1: Again, a typo in your mongo method and you do not need your authenticate methods here.
+      // OLD CODE:
+      /* Promotion.findByIdAnddelete(
         authenticate.verifyUser,
         authenticate.verifyAdmin,
         req.params.promotionId
-      )
+      ) */
+      Promotion.findByIdAndDelete(req.params.promotionId)
+      // END FIX 1
         .then((response) => {
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");

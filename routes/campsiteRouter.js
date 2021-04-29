@@ -211,7 +211,11 @@ campsiteRouter
           if (
             campsite.comments
               .id(req.params.commentId)
-              .author.equals(req.user.id)
+              // FIX 1: You are not comparing the author object but rather the "_id" property of that object.
+              // Also, the ID property of the user object is "_id"
+              // OLD CODE: .author.equals(req.user.id)
+              .author._id.equals(req.user._id)
+              // END FIX 1
           ) {
             if (req.body.rating) {
               campsite.comments.id(req.params.commentId).rating =
@@ -253,7 +257,10 @@ campsiteRouter
           if (
             campsite.comments
               .id(req.params.commentId)
-              .author.equals(req.user.id)
+              // FIX 2: Same deal here...
+              // OLD CODE: .author.equals(req.user.id)
+              .author._id.equals(req.user._id)
+              // END FIX 2
           ) {
             campsite.comments.id(req.params.commentId).remove();
             campsite
